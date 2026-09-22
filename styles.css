@@ -8,10 +8,11 @@ html, body {
   -webkit-user-select: none;
   
 }
-button {
+
+.mi-boton-personalizado {
   cursor: pointer;
-  background-color: var(--color-boton);
-  color: #180994;
+  background-color: #180994 !important;
+  color: hsl(252, 16%, 94%) !important;
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
