@@ -1,0 +1,10 @@
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: var(--fuente-app);
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  user-select: none;
+  -webkit-user-select: none;
+  
+}
