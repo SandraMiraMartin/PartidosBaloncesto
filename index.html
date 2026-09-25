@@ -121,17 +121,25 @@
     </div>
   </div>
   <!-- Modal 4: Resumen Final del Partido -->
+  <!-- Modal 4: Resumen Final del Partido -->
   <div id="modalResumenOverlay" class="modal-overlay hidden">
     <div class="modal-contenido modal-ancho">
-      <div class="modal-header">
-        <h2>Resumen del Partido</h2>
-        <button id="btnCerrarResumen" class="btn-cerrar">&times;</button>
-      </div>
-      <p class="subtitulo-modal">Tiempo total jugado por cada jugadora:</p>
+        <div class="modal-header">
+            <h2>Resumen del Partido</h2>
+            <button id="btnCerrarResumen" class="btn-cerrar">&times;</button>
+        </div>
       
-      <div id="listaResumenJugadoras" class="lista-resumen"></div>
+        <!-- ID 'contenidoPDF' engloba lo que se exportará -->
+        <div id="contenidoPDF">
+            <p class="subtitulo-modal">Tiempo total jugado por cada jugadora:</p>
+            <div id="listaResumenJugadoras" class="lista-resumen"></div>
+        </div>
 
-      <button id="btnAceptarResumen" class="btn-guardar mt-15">Cerrar y Limpiar</button>
+        <!-- Botones de Acción -->
+        <div class="acciones-resumen mt-15">
+            <button id="btnDescargarPDF" class="btn-pdf">Descargar PDF</button>
+            <button id="btnAceptarResumen" class="btn-guardar">Cerrar y Limpiar</button>
+        </div>
     </div>
   </div>
 

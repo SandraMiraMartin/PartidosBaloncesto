@@ -293,3 +293,34 @@ function finalizarPartido() {
   tiempoSegundosCuarto = 600;
   actualizarPantallaTiempo();
 }
+
+//PDF
+// Obtener el botón de descarga en el DOM
+const btnDescargarPDF = document.getElementById('btnDescargarPDF');
+
+// Función para exportar a PDF
+btnDescargarPDF.addEventListener('click', () => {
+  const elementoOriginal = document.getElementById('contenidoPDF');
+
+  // Clonamos el elemento para modificar las propiedades sin alterar la vista en pantalla
+  const clon = elementoOriginal.cloneNode(true);
+  
+  // Eliminamos el límite de altura y el scroll del contenedor interno en el clon
+  const listaClonada = clon.querySelector('#listaResumenJugadoras');
+  if (listaClonada) {
+    listaClonada.style.maxHeight = 'none';
+    listaClonada.style.overflow = 'visible';
+  }
+
+  // Opciones de exportación
+  const opciones = {
+    margin:       15,
+    filename:     `Resumen_Partido_${new Date().toISOString().slice(0,10)}.pdf`,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, scrollY: 0 },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  // Generar el PDF usando la copia modificada
+  html2pdf().set(opciones).from(clon).save();
+});

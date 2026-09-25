@@ -415,3 +415,24 @@ html, body {
   font-family: monospace;
   font-size: 1.1rem;
 }
+/*PDF*/
+/* Botones del Modal Resumen */
+.acciones-resumen {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-pdf {
+  flex: 1;
+  background-color: #2a9d8f;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-pdf:hover {
+  background-color: #218378;
+}
