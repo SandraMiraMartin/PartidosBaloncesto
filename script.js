@@ -1,7 +1,8 @@
 // Variables de Estado Global
 let plantilla = [];
 let titulares = [];
-let tiempoSegundos = 0;
+let tiempoSegundosCuarto = 600; // 10 minutos (600s) por cuarto
+let cuartoActual = 1;
 let timerInterval = null;
 let seleccionadosTemp = [];
 let jugadoraACambiarIndex = null;
@@ -10,11 +11,14 @@ let jugadoraACambiarIndex = null;
 const modalOverlay = document.getElementById('modalOverlay');
 const modalInicialesOverlay = document.getElementById('modalInicialesOverlay');
 const modalCambioOverlay = document.getElementById('modalCambioOverlay');
+const modalResumenOverlay = document.getElementById('modalResumenOverlay');
 
 const btnAbrirModal = document.getElementById('btnAbrirModal');
 const btnCerrarModal = document.getElementById('btnCerrarModal');
 const btnCerrarIniciales = document.getElementById('btnCerrarIniciales');
 const btnCerrarCambio = document.getElementById('btnCerrarCambio');
+const btnCerrarResumen = document.getElementById('btnCerrarResumen');
+const btnAceptarResumen = document.getElementById('btnAceptarResumen');
 
 const formJugador = document.getElementById('formJugador');
 const listaJugadores = document.getElementById('listaJugadores');
@@ -27,6 +31,7 @@ const btnInicio = document.getElementById('btnInicio');
 const btnPausa = document.getElementById('btnPausa');
 const btnFin = document.getElementById('btnFin');
 const cronometroDisplay = document.getElementById('cronometro');
+const labelCuarto = document.getElementById('labelCuarto');
 
 const listaSeleccionIniciales = document.getElementById('listaSeleccionIniciales');
 const contadorSeleccionadas = document.getElementById('contadorSeleccionadas');
@@ -34,14 +39,17 @@ const btnConfirmarIniciales = document.getElementById('btnConfirmarIniciales');
 
 const listaSuplentesDisponibles = document.getElementById('listaSuplentesDisponibles');
 const textoCambiandoA = document.getElementById('textoCambiandoA');
+const listaResumenJugadoras = document.getElementById('listaResumenJugadoras');
 
-// Abrir y Cerrar Ventanas Emergentes
+// Gestores de Modales
 btnAbrirModal.addEventListener('click', () => modalOverlay.classList.remove('hidden'));
 btnCerrarModal.addEventListener('click', () => modalOverlay.classList.add('hidden'));
 btnCerrarIniciales.addEventListener('click', () => modalInicialesOverlay.classList.add('hidden'));
 btnCerrarCambio.addEventListener('click', () => modalCambioOverlay.classList.add('hidden'));
+btnCerrarResumen.addEventListener('click', () => modalResumenOverlay.classList.add('hidden'));
+btnAceptarResumen.addEventListener('click', () => modalResumenOverlay.classList.add('hidden'));
 
-// Registro de Jugadora
+// Registrar Jugadora
 formJugador.addEventListener('submit', (e) => {
   e.preventDefault();
   if (plantilla.length >= 12) return;
@@ -49,14 +57,15 @@ formJugador.addEventListener('submit', (e) => {
   const numero = document.getElementById('numeroJugador').value;
   const nombre = document.getElementById('nombreJugador').value;
 
-  plantilla.push({ id: Date.now(), numero, nombre });
+  // Añadimos la propiedad tiempoSegundosJugados = 0
+  plantilla.push({ id: Date.now(), numero, nombre, tiempoSegundosJugados: 0 });
 
   formJugador.reset();
   modalOverlay.classList.add('hidden');
   renderizarPlantilla();
 });
 
-// Renderizado de Plantilla (Izquierda)
+// Renderizar Lista en Banquillo/Plantilla
 function renderizarPlantilla() {
   listaJugadores.innerHTML = '';
 
@@ -81,7 +90,7 @@ function eliminarJugadora(index) {
   renderizarPlantilla();
 }
 
-// Abrir Modal para Selección de 5 Iniciales
+// Ventana de Selección de Quinteto Inicial
 btnEmpezarPartido.addEventListener('click', () => {
   seleccionadosTemp = [];
   contadorSeleccionadas.textContent = 0;
@@ -116,17 +125,23 @@ function toggleSeleccionInicial(checkbox, id) {
   btnConfirmarIniciales.disabled = seleccionadosTemp.length !== 5;
 }
 
-// Confirmar Iniciales y Pasar a Cancha
+// Confirmar 5 Titulares e Iniciar Estado del Partido
 btnConfirmarIniciales.addEventListener('click', () => {
+  // Reiniciar tiempos al iniciar un partido nuevo
+  plantilla.forEach(j => j.tiempoSegundosJugados = 0);
+  cuartoActual = 1;
+  tiempoSegundosCuarto = 600;
+  
   titulares = plantilla.filter(j => seleccionadosTemp.includes(j.id));
   modalInicialesOverlay.classList.add('hidden');
   
+  actualizarPantallaTiempo();
   renderizarCampo();
   btnInicio.disabled = false;
   btnEmpezarPartido.disabled = true;
 });
 
-// Renderizar Jugadoras en la Cancha (Derecha)
+// Renderizar Jugadoras en Pista
 function renderizarCampo() {
   contenedorCampo.innerHTML = '';
 
@@ -143,7 +158,7 @@ function renderizarCampo() {
   });
 }
 
-// Proceso de Cambio de Jugadoras
+// Modal de Cambio
 function abrirModalCambio(indexTitular) {
   jugadoraACambiarIndex = indexTitular;
   const saliente = titulares[indexTitular];
@@ -170,20 +185,56 @@ function abrirModalCambio(indexTitular) {
   modalCambioOverlay.classList.remove('hidden');
 }
 
+// Ejecutar Cambio (Se guarda el tiempo de la saliente y entra la nueva)
 function realizarCambio(entrante) {
   titulares[jugadoraACambiarIndex] = entrante;
   renderizarCampo();
   modalCambioOverlay.classList.add('hidden');
 }
 
-// Cronómetro de Partido
+// Formateador de segundos a mm:ss
+function formatearTiempo(segundosTotales) {
+  const min = String(Math.floor(segundosTotales / 60)).padStart(2, '0');
+  const seg = String(segundosTotales % 60).padStart(2, '0');
+  return `${min}:${seg}`;
+}
+
+function actualizarPantallaTiempo() {
+  cronometroDisplay.textContent = formatearTiempo(tiempoSegundosCuarto);
+  labelCuarto.textContent = `Q${cuartoActual} - 10:00`;
+}
+
+// Control del Tiempo
 btnInicio.addEventListener('click', () => {
   if (timerInterval) return;
+
   timerInterval = setInterval(() => {
-    tiempoSegundos++;
-    const min = String(Math.floor(tiempoSegundos / 60)).padStart(2, '0');
-    const seg = String(tiempoSegundos % 60).padStart(2, '0');
-    cronometroDisplay.textContent = `${min}:${seg}`;
+    if (tiempoSegundosCuarto > 0) {
+      tiempoSegundosCuarto--;
+      
+      // Sumar 1 segundo a las 5 jugadoras que están actualmente en pista
+      titulares.forEach(titular => {
+        titular.tiempoSegundosJugados++;
+      });
+
+      cronometroDisplay.textContent = formatearTiempo(tiempoSegundosCuarto);
+    } else {
+      // Fin del cuarto
+      clearInterval(timerInterval);
+      timerInterval = null;
+
+      if (cuartoActual < 4) {
+        alert(`¡Fin del Cuarto ${cuartoActual}!`);
+        cuartoActual++;
+        tiempoSegundosCuarto = 600;
+        actualizarPantallaTiempo();
+        btnInicio.disabled = false;
+        btnPausa.disabled = true;
+      } else {
+        alert('¡Fin del Partido!');
+        finalizarPartido();
+      }
+    }
   }, 1000);
 
   btnInicio.disabled = true;
@@ -199,16 +250,46 @@ btnPausa.addEventListener('click', () => {
 });
 
 btnFin.addEventListener('click', () => {
+  if (confirm('¿Deseas finalizar el partido ahora?')) {
+    finalizarPartido();
+  }
+});
+
+// Finalizar Partido y Generar Modal de Resumen
+function finalizarPartido() {
   clearInterval(timerInterval);
   timerInterval = null;
-  tiempoSegundos = 0;
-  cronometroDisplay.textContent = "00:00";
 
+  // Generar resumen de minutos de cada jugadora
+  listaResumenJugadoras.innerHTML = '';
+  
+  // Ordenar jugadoras por las que más jugaron
+  const jugadorasOrdenadas = [...plantilla].sort((a, b) => b.tiempoSegundosJugados - a.tiempoSegundosJugados);
+
+  jugadorasOrdenadas.forEach(j => {
+    const div = document.createElement('div');
+    div.className = 'item-resumen';
+    div.innerHTML = `
+      <div>
+        <strong>#${j.numero} ${j.nombre}</strong>
+      </div>
+      <span class="tiempo-total">${formatearTiempo(j.tiempoSegundosJugados)} min</span>
+    `;
+    listaResumenJugadoras.appendChild(div);
+  });
+
+  // Mostrar modal de resumen
+  modalResumenOverlay.classList.remove('hidden');
+
+  // Resetear estados del tablero
   titulares = [];
   contenedorCampo.innerHTML = '<p class="empty-state">Partido finalizado. Selecciona un nuevo quinteto.</p>';
-
   btnInicio.disabled = true;
   btnPausa.disabled = true;
   btnFin.disabled = true;
   btnEmpezarPartido.disabled = plantilla.length < 5;
-});
+  
+  cuartoActual = 1;
+  tiempoSegundosCuarto = 600;
+  actualizarPantallaTiempo();
+}

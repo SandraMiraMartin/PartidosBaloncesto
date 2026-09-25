@@ -63,12 +63,12 @@ html, body {
   flex-direction: column;
   align-items: center;
 }
-
+/* Estilos para el título del bloque superior */
 .bloque-superior h1 {
   font-size: 2.2rem;
   margin-bottom: 15px;
 }
-
+/* Estilos para el botón del bloque superior */
 .bloque-superior .mi-boton-personalizado {
   max-width: 320px; /* Ancho cómodo para el botón superior */
   width: 100%;
@@ -371,4 +371,47 @@ html, body {
   .div-hijo.main-layout {
     flex-direction: column;
   }
+}
+
+/* Badge para indicar el cuarto actual */
+.badge-cuarto {
+  display: inline-block;
+  background-color: #180994;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 12px;
+  margin-top: 4px;
+}
+
+/* Modal Resumen */
+.modal-contenido.modal-ancho {
+  max-width: 500px;
+}
+/* Estilos para la lista de resumen */
+.lista-resumen {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+/* Estilos para cada item del resumen */
+.item-resumen {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #180994;
+}
+/* Estilos para el tiempo total en el resumen */
+.item-resumen .tiempo-total {
+  font-weight: bold;
+  color: #2a9d8f;
+  font-family: monospace;
+  font-size: 1.1rem;
 }

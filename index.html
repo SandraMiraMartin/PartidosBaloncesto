@@ -38,23 +38,30 @@
 
         <!-- BLOQUE 3 (Columna Derecha): Cancha + Controles -->
         <div class="columna-derecha">
-          <div class="recuadro-cancha">
             <div class="cancha-header">
-              <h2>En Campo (5 Iniciales)</h2>
-              <span id="cronometro" class="cronometro">00:00</span>
+                <div>
+                    <span id="labelCuarto" class="badge-cuarto">Q1 - 10:00</span>
+                </div>
+                <span id="cronometro" class="cronometro">10:00</span>
             </div>
+            <div class="recuadro-cancha">
+                <div class="cancha-header">
+                    <h2>En Campo (5 Jugadores)</h2>
+                    <span id="cronometro" class="cronometro">00:00</span>
+                </div>
             
-            <div id="contenedorCampo" class="contenedor-campo">
-              <p class="empty-state">Selecciona las 5 jugadoras iniciales para comenzar.</p>
+                <div id="contenedorCampo" class="contenedor-campo">
+                    <p class="empty-state">Selecciona las 5 jugadoras iniciales para comenzar.</p>
+                </div>
             </div>
-          </div>
-
           <!-- Botones de Control de Tiempo -->
           <div class="controles-tiempo">
             <button id="btnInicio" class="btn-control btn-inicio" disabled>Inicio</button>
             <button id="btnPausa" class="btn-control btn-pausa" disabled>Pausa</button>
             <button id="btnFin" class="btn-control btn-fin" disabled>Fin</button>
           </div>
+          
+            
         </div>
 
       </div>
@@ -111,6 +118,20 @@
       <p id="textoCambiandoA" class="subtitulo-modal">Cambiar a...</p>
       
       <div id="listaSuplentesDisponibles" class="lista-seleccion"></div>
+    </div>
+  </div>
+  <!-- Modal 4: Resumen Final del Partido -->
+  <div id="modalResumenOverlay" class="modal-overlay hidden">
+    <div class="modal-contenido modal-ancho">
+      <div class="modal-header">
+        <h2>Resumen del Partido</h2>
+        <button id="btnCerrarResumen" class="btn-cerrar">&times;</button>
+      </div>
+      <p class="subtitulo-modal">Tiempo total jugado por cada jugadora:</p>
+      
+      <div id="listaResumenJugadoras" class="lista-resumen"></div>
+
+      <button id="btnAceptarResumen" class="btn-guardar mt-15">Cerrar y Limpiar</button>
     </div>
   </div>
 
